@@ -2,41 +2,30 @@ import java.util.Scanner;
 
 class Task4 {
 	
-	String userName;
-	String password;
+        public static String userID;
 	Scanner sc=new Scanner(System.in);
 
-	public void register() {
-		System.out.print("\nEnter Your Username - ");
-		userName = sc.nextLine();
-		System.out.print("\nEnter Your Password - ");
-		password = sc.nextLine();
-		System.out.println("\nRegistration completed..kindly login");
-	}
 	
 	public void login() {
-		while ( Login ) {
-			System.out.print("\nEnter Your Username - ");
-			String Username = sc.nextLine();
-			if ( Username.equals(userName) ) {
-				while ( Login ) {
-					System.out.print("\nEnter Your Password - ");
-					String Password = sc.nextLine();
-					if ( Password.equals(password) ) {
-						System.out.print("\nLogin successful!!");
-					}
-					else {
-						System.out.println("\nIncorrect Password");
-					}
-				}
-			}
-			else {
-				System.out.println("\nUsername not found");
-			}
-		}
-		return Login;
-	}
-
+	System.out.println("---------------- WELCOME TO ONLINE EXAM SYSTEM ----------------");
+        System.out.print("Enter User-Id: ");
+        userID = sc.next();
+        System.out.print("Enter Password: ");
+        int password = sc.nextInt();
+        loginto.put("Shraddha",1234);
+        loginto.put("Shradhu",1232);
+        loginto.put("Shra",12345);
+        
+        if (loginto.containsKey(userID) && loginto.get(userID) == password)
+        {
+            System.out.println("\n" + "LOGIN SUCCESSFULLY...!");
+            Main();
+        }
+        else{
+            System.out.println("\n" + "Invalid login credentials.!!! Please try again...");
+            login();
+}
+}
 
 public void Main()
     {
@@ -131,23 +120,9 @@ public void test(){
     
 
  public static void main(String args[]){
-                System.out.println("1.Register \n2.Login \3.Exit");
-		System.out.print("Enter Your Choice - ");
-		int choice = sc.nextInt();
-		
-		if ( choice == 1 ) {
-    	        OnlineExam exam = new OnlineExam();
-                exam.register();
-                }
-                else if(choice == 2)
-                {
+    	        Task4 exam = new Task4();
+               
                 exam.login();
-                }
-                else
-                {
-                 System.exit(0);
-                }
-    }
 }
 
 
