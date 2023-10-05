@@ -1,134 +1,172 @@
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
-class Task4 {
-	
-        public static String userID;
-	Scanner sc=new Scanner(System.in);
+class User {
+    private String username;
+    private String password;
 
-	
-	public void login() {
-	System.out.println("---------------- WELCOME TO ONLINE EXAM SYSTEM ----------------");
-        System.out.print("Enter User-Id: ");
-        userID = sc.next();
-        System.out.print("Enter Password: ");
-        int password = sc.nextInt();
-        loginto.put("Shraddha",1234);
-        loginto.put("Shradhu",1232);
-        loginto.put("Shra",12345);
-        
-        if (loginto.containsKey(userID) && loginto.get(userID) == password)
-        {
-            System.out.println("\n" + "LOGIN SUCCESSFULLY...!");
-            Main();
-        }
-        else{
-            System.out.println("\n" + "Invalid login credentials.!!! Please try again...");
-            login();
-}
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }
 
-public void Main()
-    {
-        System.out.println("-----------------------------------------------------");
-        System.out.println("Online Examination System ---> Welcome " + OnlineExam.userName + "!");
-        System.out.println("-----------------------------------------------------");
-        System.out.println("Select 1 to Start the test...");
-        System.out.println("Select 3 to Logout...");
-        System.out.println("-----------------------------------------------------");
-        System.out.print("Select Option: ");
-        int sp=sc.nextInt();
-        switch(sp){
-            case 1: 
-            	test();
-            	Main();
-            	break;
-            case 2: 
-                System.out.println("\n" + "Logout Successfully...!");
-                System.out.println("Thank You for Attending the Test...");
-                System.out.println("-----------------------------------------------------");
-            	System.exit(0);
-            	break;
-            default: 
-            	System.out.println("\n" + "Invalid Option Choice.! Try again...");
-            	Main();
-            	break;
+class Question {
+    private String question;
+    private String correctAnswer;
+
+    public Question(String question, String correctAnswer) {
+        this.question = question;
+        this.correctAnswer = correctAnswer;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public String getCorrectAnswer() {
+        return correctAnswer;
+    }
+}
+
+public class OnlineExamSystem {
+    private static Map<String, User> users = new HashMap<>();
+    private static Map<String, Question> questions = new HashMap<>();
+    private static Map<String, Integer> userScores = new HashMap<>();
+    private static String currentUser = null;
+
+    public static void main(String[] args) {
+        initializeData(); // Load initial data (users, questions)
+
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Welcome to the Online Examination System");
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Take Test");
+            System.out.println("4. View Marks");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline character
+
+            switch (choice) {
+                case 1:
+                    registerUser(scanner);
+                    break;
+                case 2:
+                    loginUser(scanner);
+                    break;
+                case 3:
+                    takeTest(scanner);
+                    break;
+                case 4:
+                    viewMarks();
+                    break;
+                case 5:
+                    System.out.println("Exiting the system. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
         }
     }
-    
-public void test(){
+
+    private static void initializeData() {
+        users.put("user1", new User("user1", "password1"));
+        users.put("user2", new User("user2", "password2"));
+
+        questions.put("q1", new Question("What is 2 + 2?", "4"));
+        questions.put("q2", new Question("What is the capital of France?", "Paris"));
+    }
+
+    private static void registerUser(Scanner scanner) {
+        System.out.print("Enter a username: ");
+        String username = scanner.nextLine();
+
+        if (users.containsKey(username)) {
+            System.out.println("Username already exists. Please choose a different one.");
+            return;
+        }
+
+        System.out.print("Enter a password: ");
+        String password = scanner.nextLine();
+
+        User newUser = new User(username, password);
+        users.put(username, newUser);
+
+        System.out.println("Registration successful. You can now log in.");
+    }
+
+    private static void loginUser(Scanner scanner) {
+        System.out.print("Enter your username: ");
+        String username = scanner.nextLine();
+
+        if (!users.containsKey(username)) {
+            System.out.println("User not found. Please register first.");
+            return;
+        }
+
+        System.out.print("Enter your password: ");
+        String password = scanner.nextLine();
+
+        User user = users.get(username);
+
+        if (user.getPassword().equals(password)) {
+            currentUser = user.getUsername();
+            System.out.println("Login successful. Welcome, " + user.getUsername() + "!");
+        } else {
+            System.out.println("Incorrect password. Please try again.");
+        }
+    }
+
+    private static void takeTest(Scanner scanner) {
+        if (currentUser == null) {
+            System.out.println("You must log in before taking the test.");
+            return;
+        }
+
         int score = 0;
-        int c = 0;
-        char ans;
-        System.out.println("\n\n----------------- STARTING THE TEST -----------------");
-        System.out.println("Each question consist of 4 option you have to choose correct answer");
-        System.out.println("All the very best.!!");
-        
-       
-            System.out.println("Ques1. Java is developed by:");
-            System.out.println("\ta.James Gosling \n\tb.Dennis Ritchie\n\tc.Steve Jobs\n\td.Ken Thompson");
-            System.out.print("\n" + "Answer: ");
-            ans = sc.next().charAt(0);
-            if(ans == 'c')
-            {
-                c += 1;
+        for (String questionId : questions.keySet()) {
+            Question question = questions.get(questionId);
+
+            System.out.println("Question: " + question.getQuestion());
+            System.out.print("Your answer: ");
+            String userAnswer = scanner.nextLine();
+
+            if (userAnswer.equalsIgnoreCase(question.getCorrectAnswer())) {
+                score++;
             }
-            
-            System.out.println("Ques2. Java is:");
-            System.out.println("\ta.High Level\n\tb.Low Level\n\tc.Middle Level\n\td.Machine Level");
-            System.out.print("\n" + "Answer: ");
-            ans = sc.next().charAt(0);
-            if(ans == 'a')
-            {
-                c += 1;
-            }
-           
-            
-            System.out.println("Ques3. Java is:");
-            System.out.println("\ta.Platform Dependent\n\tb.Platform Indepenedent\n\tc.None\n\td.All of the above");
-            System.out.print("\n" + "Answer: ");
-            ans = sc.next().charAt(0);
-            if(ans == 'c'){
-                c += 1;
-            }
-           
-            
-            System.out.println("Ques4. Technical Name of Core Java is knon as:");
-            System.out.println("\ta.JSE\n\tb.JEE\n\tc.J2SE\n\td.J2EE");
-            System.out.print("\n" + "Answer: ");
-            ans = sc.next().charAt(0);
-            if(ans == 'b')
-            {
-                c += 1;
-            }
-           
-            System.out.println("Ques5. Java is:");
-            System.out.println("\ta.Compiled Language\n\tb.Interpreted Language\n\tc.Both Compiled and Interpreted\n\td.None");
-            System.out.print("\n" + "Answer: ");
-            ans = sc.next().charAt(0);
-            if(ans == 'a') 
-            {
-                c += 1;
-            }
-            break;
         }
-        
-        System.out.println("\n" + "Test Completed.!");
-        score = (c * 5);
-        System.out.println("Number of correct answers: " +c);
-        System.out.println("Congratulations!! Your scored " +score+ " points...");
+
+        userScores.put(currentUser, score);
+        System.out.println("Test completed. Your score: " + score);
     }
-    
 
- public static void main(String args[]){
-    	        Task4 exam = new Task4();
-               
-                exam.login();
+    private static void viewMarks() {
+        if (currentUser == null) {
+            System.out.println("You must log in to view your marks.");
+            return;
+        }
+
+        Integer userScore = userScores.get(currentUser);
+
+        if (userScore == null) {
+            System.out.println("You haven't taken any tests yet.");
+        } else {
+            System.out.println("Your marks: " + userScore);
+        }
+    }
 }
-
-
-
-
-
-
-
-
